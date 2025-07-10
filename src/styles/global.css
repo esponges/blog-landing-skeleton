@@ -1,0 +1,12 @@
+/* Global Styles for Astro Blog Skeleton */
+:root {
+  --color-bg: #fff;
+  --color-text: #222;
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+}
