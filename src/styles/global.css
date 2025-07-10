@@ -1,7 +1,11 @@
-/* Global Styles for Astro Blog Skeleton */
+@import "tailwindcss";
+
 :root {
   --color-bg: #fff;
   --color-text: #222;
+  --color-primary: #2563eb;
+  --color-secondary: #374151;
+  --color-accent: #ec4899;
 }
 body {
   background: var(--color-bg);
@@ -9,4 +13,13 @@ body {
   font-family: system-ui, sans-serif;
   margin: 0;
   padding: 0;
+}
+
+/* Base typography styles */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+p {
+  margin-bottom: 1rem;
 }

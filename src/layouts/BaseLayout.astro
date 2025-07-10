@@ -12,10 +12,17 @@ const { title = 'Astro Blog', description = 'A modern Astro blog skeleton' } = A
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <link rel="icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
-  <body>
-    <main>
+  <body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <header class="w-full">
+      <slot name="header" />
+    </header>
+    <main class="flex-1 container mx-auto px-4 py-8">
       <slot />
     </main>
+    <footer class="w-full bg-secondary text-white py-4 mt-8">
+      <slot name="footer" />
+    </footer>
   </body>
 </html>

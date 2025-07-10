@@ -1,0 +1,16 @@
+---
+const { siteTitle = 'Astro Blog Skeleton' } = Astro.props;
+---
+<nav class="flex items-center justify-between py-4 px-6 bg-primary">
+  <div class="font-bold text-lg">
+    {siteTitle}
+  </div>
+  <ul class="hidden md:flex gap-6">
+    <li><a href="/" class="hover:text-accent">Home</a></li>
+    <li><a href="/blog" class="hover:text-accent">Blog</a></li>
+    <li><a href="/about" class="hover:text-accent">About</a></li>
+  </ul>
+  <div class="md:hidden">
+    <slot name="mobileMenu" />
+  </div>
+</nav>
