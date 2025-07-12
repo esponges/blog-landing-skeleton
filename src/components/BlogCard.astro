@@ -1,0 +1,12 @@
+---
+import type { BlogPost } from '../types/blog';
+const { post } = Astro.props as { post: BlogPost };
+---
+<a href={`/blog/${post.slug}`} class="block bg-white rounded-lg shadow hover:shadow-lg transition p-4 flex flex-col h-full border border-gray-100 hover:border-primary-500">
+  <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded mb-3 overflow-hidden">
+    {post.coverImage ? <img src={post.coverImage} alt={post.title} class="object-cover w-full h-full" loading="lazy" /> : <div class="w-full h-full flex items-center justify-center text-gray-400">No Image</div>}
+  </div>
+  <h2 class="text-lg font-semibold mb-1 line-clamp-2">{post.title}</h2>
+  <p class="text-gray-500 text-sm mb-2 line-clamp-2">{post.excerpt}</p>
+  <span class="text-xs text-gray-400 mt-auto">{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Draft'}</span>
+</a>

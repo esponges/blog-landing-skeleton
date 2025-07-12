@@ -1,0 +1,16 @@
+---
+import type { BlogPost } from '../types/blog';
+const { post } = Astro.props as { post: BlogPost };
+---
+<article class="prose prose-lg max-w-none dark:prose-invert">
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold mb-2">{post.title}</h1>
+    <div class="flex items-center text-sm text-gray-500 mb-2">
+      <span>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Draft'}</span>
+      <span class="mx-2">•</span>
+      <span>By {post.authorId}</span>
+    </div>
+    {post.coverImage && <img src={post.coverImage} alt={post.title} class="rounded-lg w-full max-h-96 object-cover mb-4" />}
+  </header>
+  <section class="blog-content" set:html={post.content}></section>
+</article>

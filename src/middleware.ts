@@ -1,4 +1,4 @@
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import type { MiddlewareHandler, APIContext } from 'astro';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -29,7 +29,7 @@ export const onRequest: MiddlewareHandler = async (context: APIContext, next) =>
   }
 
   try {
-    const decoded = verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     locals.user = decoded;
     return next();
   } catch (error) {

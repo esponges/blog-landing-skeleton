@@ -1,0 +1,29 @@
+---
+import BlogCard from '../../components/BlogCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllPosts } from '../../lib/posts';
+const posts = await getAllPosts();
+const page = Number(Astro.url.searchParams.get('page') || 1);
+const pageSize = 10;
+const paginated = posts.slice((page - 1) * pageSize, page * pageSize);
+const totalPages = Math.ceil(posts.length / pageSize);
+---
+
+<BaseLayout title="Blog">
+  <h1 class="text-3xl font-bold mb-6">Blog</h1>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {paginated.map(post => <BlogCard post={post} />)}
+  </div>
+  {totalPages > 1 && (
+    <nav class="flex justify-center mt-8 gap-2">
+      {Array.from({ length: totalPages }).map((_, i) => (
+        <a
+          href={`?page=${i + 1}`}
+          class={`px-3 py-1 rounded ${page === i + 1 ? 'bg-primary-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-primary-100'}`}
+        >
+          {i + 1}
+        </a>
+      ))}
+    </nav>
+  )}
+</BaseLayout>
