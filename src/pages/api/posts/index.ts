@@ -1,59 +1,45 @@
-import type { APIRoute } from 'astro';
-import { getAllPosts, createPost } from '../../../lib/posts';
-import type { CreatePostRequest } from '../../../types/blog';
+import sql from '../../../lib/db';
+import { nanoid } from 'nanoid';
+import type { BlogPost, CreatePostRequest } from '../../../types/blog';
 
-export const GET: APIRoute = async () => {
-  try {
-    const posts = await getAllPosts();
-    return new Response(JSON.stringify({ success: true, data: posts }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: {
-          message: error instanceof Error ? error.message : 'An unknown error occurred',
-        }
-      }),
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-  }
-};
+export async function getAllPosts(): Promise<BlogPost[]> {
+  return await sql<BlogPost[]>`
+    SELECT * FROM posts ORDER BY publishedAt DESC NULLS LAST, createdAt DESC
+  `;
+}
 
-export const POST: APIRoute = async ({ request }) => {
-  try {
-    const body = await request.json();
-    const post = await createPost(body as CreatePostRequest);
-    
-    return new Response(JSON.stringify({ success: true, data: post }), {
-      status: 201,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: {
-          message: error instanceof Error ? error.message : 'An unknown error occurred',
-        }
-      }),
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-  }
-};
+export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+  const result = await sql<BlogPost[]>`
+    SELECT * FROM posts WHERE slug = ${slug} LIMIT 1
+  `;
+  return result[0] || null;
+}
+
+export async function createPost(data: CreatePostRequest): Promise<BlogPost> {
+  const id = nanoid();
+  const now = new Date();
+  const slug = data.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '');
+
+  const [post] = await sql<BlogPost[]>`
+    INSERT INTO posts (id, title, slug, content, excerpt, coverImage, tags, status, createdAt, updatedAt)
+    VALUES (
+      ${id},
+      ${data.title},
+      ${slug},
+      ${data.content},
+      ${data.excerpt || ''},
+      ${data.coverImage || null},
+      ${JSON.stringify(data.tags || [])},
+      'draft',
+      ${now},
+      ${now}
+    )
+    RETURNING *
+  `;
+  return post;
+}
+
+// Add updatePost and deletePost similarly...

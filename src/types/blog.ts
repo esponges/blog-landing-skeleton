@@ -3,13 +3,13 @@ export interface BlogPost {
   title: string;
   slug: string;
   content: string;
-  excerpt: string;
-  coverImage?: string;
-  publishedAt?: Date;
+  excerpt?: string;
+  coverImage?: string | null;
+  publishedAt?: Date | null;
   updatedAt: Date;
   createdAt: Date;
   authorId: string;
-  status: 'draft' | 'published';
+  status: string;
   tags?: string[];
 }
 
@@ -17,7 +17,7 @@ export interface CreatePostRequest {
   title: string;
   content: string;
   excerpt?: string;
-  coverImage?: string;
+  coverImage?: string | null;
   tags?: string[];
 }
 

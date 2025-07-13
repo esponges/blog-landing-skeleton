@@ -17,6 +17,7 @@
     "@types/react-dom": "^19.1.6",
     "astro": "^5.11.0",
     "jsonwebtoken": "^9.0.2",
+    "postgres": "^3.4.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "slugify": "^1.6.6"
