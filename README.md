@@ -41,7 +41,15 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
+| `npm run seed`            | Seed the database with dummy blog posts          |
 
-## 👀 Want to learn more?
+## 🗄️ Seeding the Database
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+To populate your database with some dummy blog posts for development, run:
+
+```sh
+npm run seed
+```
+
+This will execute the script at `scripts/seed.ts`, which creates the `posts` table (if it doesn't exist) and inserts sample posts.  
+Make sure your `.env` file contains a valid `DATABASE_URL` pointing to your PostgreSQL instance.
