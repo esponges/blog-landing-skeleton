@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getPostBySlug, updatePost, deletePost } from '../../../lib/posts';
+import type { UpdatePostRequest } from '../../../types/blog';
+
+const { slug } = Astro.params;
+let post = null;
+let error = '';
+let success = '';
+if (slug) {
+  post = await getPostBySlug(slug);
+}
+
+if (Astro.request.method === 'POST' && post && slug) {
+  const form = await Astro.request.formData();
+  try {
+    const data: UpdatePostRequest = {
+      title: form.get('title')?.toString() || post.title,
+      content: form.get('content')?.toString() || post.content,
+      excerpt: form.get('excerpt')?.toString() || post.excerpt,
+      coverImage: form.get('coverImage')?.toString() || post.coverImage,
+      tags: form.get('tags')?.toString()?.split(',').map(t => t.trim()) || post.tags,
+      status: (form.get('status')?.toString() as 'draft' | 'published') || post.status
+    };
+    await updatePost(slug, data);
+    success = 'Post updated!';
+    post = await getPostBySlug(slug); // refresh post data
+  } catch (e) {
+    error = e instanceof Error ? e.message : 'Unknown error';
+  }
+}
+---
+<BaseLayout title={`Edit Post: ${post?.title || ''}`}>
+  {post ? (
+    <form method="post" class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+      {error && <div class="mb-4 text-red-600">{error}</div>}
+      {success && <div class="mb-4 text-green-600">{success}</div>}
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Title</label>
+        <input name="title" value={post.title} class="w-full border rounded px-3 py-2" required />
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Excerpt</label>
+        <input name="excerpt" value={post.excerpt || ''} class="w-full border rounded px-3 py-2" />
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Content</label>
+        <textarea name="content" class="w-full border rounded px-3 py-2 min-h-[200px]" required>{post.content}</textarea>
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Cover Image URL</label>
+        <input name="coverImage" value={post.coverImage || ''} class="w-full border rounded px-3 py-2" />
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Tags (comma separated)</label>
+        <input name="tags" value={post.tags?.join(', ') || ''} class="w-full border rounded px-3 py-2" />
+      </div>
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Status</label>
+        <select name="status" class="w-full border rounded px-3 py-2">
+          <option value="draft" selected={post.status === 'draft'}>Draft</option>
+          <option value="published" selected={post.status === 'published'}>Published</option>
+        </select>
+      </div>
+      <div class="flex gap-2">
+        <button type="submit" class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600">Save</button>
+        <button type="button" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onclick={`if(confirm('Delete this post?')){fetch('/api/posts/${slug}',{method:'DELETE'}).then(()=>window.location='/admin/posts')}`}>Delete</button>
+      </div>
+    </form>
+  ) : (
+    <div class="text-center py-24">
+      <h1 class="text-4xl font-bold mb-4">404</h1>
+      <p class="text-lg mb-8">Sorry, this post does not exist.</p>
+      <a href="/admin/posts" class="inline-block px-6 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition">Back to Posts</a>
+    </div>
+  )}
+</BaseLayout>

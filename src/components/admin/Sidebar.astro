@@ -1,0 +1,10 @@
+---
+const { active = '' } = Astro.props;
+---
+<nav class="flex flex-col gap-2 p-6">
+  <a href="/admin" class={`py-2 px-4 rounded ${active === 'dashboard' ? 'bg-primary-700 text-white' : 'hover:bg-primary-800'}`}>Dashboard</a>
+  <a href="/admin/posts" class={`py-2 px-4 rounded ${active === 'posts' ? 'bg-primary-700 text-white' : 'hover:bg-primary-800'}`}>Posts</a>
+  <a href="/admin/posts/new" class={`py-2 px-4 rounded ${active === 'new' ? 'bg-primary-700 text-white' : 'hover:bg-primary-800'}`}>New Post</a>
+  <a href="/admin/media" class={`py-2 px-4 rounded ${active === 'media' ? 'bg-primary-700 text-white' : 'hover:bg-primary-800'}`}>Media</a>
+  <a href="/admin/settings" class={`py-2 px-4 rounded ${active === 'settings' ? 'bg-primary-700 text-white' : 'hover:bg-primary-800'}`}>Settings</a>
+</nav>
