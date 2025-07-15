@@ -7,7 +7,6 @@ interface PostsTableProps {
 }
 
 export default function PostsTable({ posts, editBaseUrl }: PostsTableProps) {
-  console.log('Rendering PostsTable with posts:', posts, editBaseUrl);
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200 rounded-lg">

@@ -1,0 +1,26 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import Sidebar from '../../../components/admin/Sidebar.astro';
+import AdminHeader from '../../../components/admin/Header';
+import PostForm from '../../../components/admin/PostForm';
+import { createPost } from '../../../lib/posts';
+import type { CreatePostRequest } from '../../../types/blog';
+
+let error = '';
+let success = '';
+
+async function handleCreate(data: CreatePostRequest) {
+  try {
+    await createPost(data);
+    success = 'Post created!';
+    // Optionally redirect to edit page
+  } catch (e) {
+    error = e instanceof Error ? e.message : 'Unknown error';
+  }
+}
+---
+<AdminLayout title="New Post">
+  <Sidebar slot="sidebar" active="new" />
+  <AdminHeader slot="header" title="New Post" user={{ name: 'Admin' }} />
+  <PostForm onSubmit={handleCreate} error={error} success={success} />
+</AdminLayout>
