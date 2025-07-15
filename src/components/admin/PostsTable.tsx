@@ -3,11 +3,11 @@ import type { BlogPost } from '../../types/blog';
 
 interface PostsTableProps {
   posts: BlogPost[];
-  onEdit: (slug: string) => void;
-  onDelete: (slug: string) => void;
+  editBaseUrl: string;
 }
 
-export default function PostsTable({ posts, onEdit, onDelete }: PostsTableProps) {
+export default function PostsTable({ posts, editBaseUrl }: PostsTableProps) {
+  console.log('Rendering PostsTable with posts:', posts, editBaseUrl);
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -32,8 +32,8 @@ export default function PostsTable({ posts, onEdit, onDelete }: PostsTableProps)
               <td className="px-4 py-2">{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : '-'}</td>
               <td className="px-4 py-2">{post.authorId}</td>
               <td className="px-4 py-2 flex gap-2">
-                <button className="text-blue-600 hover:underline" onClick={() => onEdit(post.slug)}>Edit</button>
-                <button className="text-red-600 hover:underline" onClick={() => onDelete(post.slug)}>Delete</button>
+                <button className="text-blue-600 hover:underline" onClick={() => window.location.href = `${editBaseUrl}${post.slug}`}>Edit</button>
+                <button className="text-red-600 hover:underline" onClick={() => alert(`Delete ${post.slug}`)}>Delete</button>
                 <a className="text-gray-600 hover:underline" href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer">View</a>
               </td>
             </tr>

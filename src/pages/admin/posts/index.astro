@@ -2,7 +2,7 @@
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import Sidebar from '../../../components/admin/Sidebar.astro';
 import AdminHeader from '../../../components/admin/Header.tsx';
-import PostsTable from '../../../components/admin/PostsTable';
+import PostsTable from '../../../components/admin/PostsTable.jsx';
 import { getAllPosts } from '../../../lib/posts';
 
 const posts = await getAllPosts();
@@ -23,5 +23,9 @@ const filtered = search
     <input type="text" name="search" value={search} placeholder="Search posts..." class="border rounded px-3 py-2 w-64" />
     <button type="submit" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Search</button>
   </form>
-  <PostsTable posts={filtered} onEdit={slug => window.location.href = `/admin/posts/${slug}`} onDelete={slug => alert(`Delete ${slug}`)} />
+  <PostsTable
+    client:load
+    posts={filtered}
+    editBaseUrl="/admin/posts/"
+  />
 </AdminLayout>
