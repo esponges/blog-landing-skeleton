@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { createEditor } from 'slate';
+import type { Descendant } from 'slate';
+import { Slate, Editable, withReact } from 'slate-react';
 import type { CreatePostRequest } from '../../types/blog';
 
 interface PostFormProps {
@@ -13,7 +16,21 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
   const [title, setTitle] = useState(initial.title || '');
   const [slug, setSlug] = useState('');
   const [excerpt, setExcerpt] = useState(initial.excerpt || '');
-  const [content, setContent] = useState(initial.content || '');
+  // Slate editor state
+  const [editor] = useState(() => withReact(createEditor()));
+  const [content, setContent] = useState<Descendant[]>(() => {
+    if (initial.content) {
+      try {
+        return JSON.parse(initial.content) as Descendant[];
+      } catch {
+        // fallback to plain text if not JSON
+        return [{ type: 'paragraph', children: [{ text: initial.content }] }];
+      }
+    }
+    return [
+      { type: 'paragraph', children: [{ text: '' }] }
+    ];
+  });
   const [coverImage, setCoverImage] = useState(initial.coverImage || '');
   const [tags, setTags] = useState((initial.tags || []).join(', '));
   const [saving, setSaving] = useState(false);
@@ -42,7 +59,8 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
     setSaving(true);
     await onSubmit({
       title,
-      content,
+      // Save as JSON string
+      content: JSON.stringify(content),
       excerpt,
       coverImage,
       tags: tags.split(',').map(t => t.trim()).filter(Boolean),
@@ -70,7 +88,11 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
       </div>
       <div className="mb-4">
         <label className="block font-semibold mb-1">Content</label>
-        <textarea name="content" value={content} onChange={e => setContent(e.target.value)} className="w-full border rounded px-3 py-2 min-h-[200px]" required minLength={10} />
+        <div className="border rounded min-h-[200px] bg-white">
+          <Slate editor={editor} initialValue={content} onChange={value => setContent(value)}>
+            <Editable placeholder="Write your post..." className="p-2 min-h-[180px]" />
+          </Slate>
+        </div>
       </div>
       <div className="mb-4">
         <label className="block font-semibold mb-1">Cover Image URL</label>
