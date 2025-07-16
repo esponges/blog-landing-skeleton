@@ -19,8 +19,14 @@ async function handleCreate(data: CreatePostRequest) {
   }
 }
 ---
-<AdminLayout title="New Post">
-  <Sidebar slot="sidebar" active="new" />
-  <AdminHeader slot="header" title="New Post" user={{ name: 'Admin' }} />
-  <PostForm client:load onSubmit={handleCreate} error={error} success={success} />
+
+<AdminLayout title='New Post'>
+  <Sidebar slot='sidebar' active='new' />
+  <AdminHeader slot='header' title='New Post' user={{ name: 'Admin' }} />
+  <PostForm
+    client:load
+    onSubmit={handleCreate}
+    error={error}
+    success={success}
+  />
 </AdminLayout>

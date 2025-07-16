@@ -17,7 +17,7 @@ const filtered = search
   <AdminHeader slot="header" title="Posts" user={{ name: 'Admin' }} />
   <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold">Posts</h1>
-    <a href="/admin/posts/new" class="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition">New Post</a>
+    <a href="/admin/posts/new" class="px-4 py-2 bg-primary-500 rounded hover:bg-primary-600 transition">New Post</a>
   </div>
   <form method="get" class="mb-4 flex gap-2">
     <input type="text" name="search" value={search} placeholder="Search posts..." class="border rounded px-3 py-2 w-64" />
