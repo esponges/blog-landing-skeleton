@@ -11,10 +11,6 @@ interface PostFormProps {
   success?: string;
 }
 
-
-
-
-
 export default function PostForm({ initial = {}, onSubmit, loading, error, success }: PostFormProps) {
   const [title, setTitle] = useState(initial.title || '');
   const [slug, setSlug] = useState('');
