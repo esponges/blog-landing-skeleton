@@ -229,8 +229,6 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
     setSaving(false);
   };
 
-  // ...existing code...
-
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
       {error && <div className="mb-4 text-red-600">{error}</div>}
