@@ -13,7 +13,7 @@ export const generateSlug = (title: string): string => {
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   return await sql<BlogPost[]>`
-    SELECT * FROM posts WHERE status = 'published' ORDER BY publishedAt DESC NULLS LAST, createdAt DESC
+    SELECT * FROM posts ORDER BY publishedAt DESC NULLS LAST, createdAt DESC
   `;
 }
 
