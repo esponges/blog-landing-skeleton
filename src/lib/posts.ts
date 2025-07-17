@@ -38,7 +38,7 @@ export async function createPost(data: CreatePostRequest): Promise<BlogPost> {
       ${data.content},
       ${data.excerpt || ''},
       ${data.coverImage || null},
-      ${JSON.stringify(data.tags || [])},
+      ${data.tags?.length ? data.tags : null},
       'draft',
       'system', -- TODO: Replace with actual author ID from auth
       ${now},

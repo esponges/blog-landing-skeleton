@@ -51,13 +51,26 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    await onSubmit({
-      title,
-      content: JSON.stringify(content),
-      excerpt,
-      coverImage,
-      tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-    });
+    try {
+      await fetch('/api/posts/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          content: JSON.stringify(content),
+          excerpt,
+          coverImage,
+          tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+        }),
+      });
+      setAutoSaveMsg('Draft saved successfully');
+    } catch (error) {
+      setAutoSaveMsg('Failed to save draft');
+      console.error('Error saving post:', error);
+    }
+
     setSaving(false);
   };
 
@@ -92,7 +105,7 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
         <input name="tags" value={tags} onChange={e => setTags(e.target.value)} className="w-full border rounded px-3 py-2" />
       </div>
       <div className="flex gap-2">
-        <button type="submit" className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600" disabled={saving || loading}>
+        <button type="submit" className="px-4 py-2 bg-primary-500 rounded hover:bg-primary-600 border rounded" disabled={saving || loading}>
           {saving || loading ? 'Saving...' : 'Save as Draft'}
         </button>
         {/* Add publish button if needed */}
