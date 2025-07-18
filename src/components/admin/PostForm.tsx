@@ -31,6 +31,8 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
   const [tags, setTags] = useState((initial.tags || []).join(', '));
   const [saving, setSaving] = useState(false);
   const [autoSaveMsg, setAutoSaveMsg] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     setSlug(
@@ -74,8 +76,31 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
     setSaving(false);
   };
 
+  const handleFileUpload = async (file: File) => {
+    setUploading(true);
+    setUploadError('');
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await fetch('/api/media/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setCoverImage(data.url);
+        setAutoSaveMsg('Image uploaded!');
+      } else {
+        setUploadError(data.error?.message || 'Upload failed');
+      }
+    } catch (err) {
+      setUploadError('Upload failed');
+    }
+    setUploading(false);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <form onSubmit={handleSubmit} encType='multipart/form-data' className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
       {error && <div className="mb-4 text-red-600">{error}</div>}
       {success && <div className="mb-4 text-green-600">{success}</div>}
       {autoSaveMsg && <div className="mb-2 text-xs text-gray-500">{autoSaveMsg}</div>}
@@ -98,7 +123,24 @@ export default function PostForm({ initial = {}, onSubmit, loading, error, succe
       </div>
       <div className="mb-4">
         <label className="block font-semibold mb-1">Cover Image URL</label>
-        <input name="coverImage" value={coverImage} onChange={e => setCoverImage(e.target.value)} className="w-full border rounded px-3 py-2" />
+        <input name="coverImage" value={coverImage} onChange={e => setCoverImage(e.target.value)} className="w-full border rounded px-3 py-2 mb-2" />
+        <div className="flex gap-2 items-center">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={e => {
+              if (e.target.files && e.target.files[0]) {
+                handleFileUpload(e.target.files[0]);
+              }
+            }}
+            disabled={uploading}
+          />
+          {uploading && <span className="text-xs text-gray-500">Uploading...</span>}
+          {uploadError && <span className="text-xs text-red-500">{uploadError}</span>}
+        </div>
+        {coverImage && (
+          <img src={coverImage} alt="Cover preview" className="mt-2 rounded max-h-40 border" />
+        )}
       </div>
       <div className="mb-4">
         <label className="block font-semibold mb-1">Tags (comma separated)</label>
